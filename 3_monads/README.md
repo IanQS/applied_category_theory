@@ -1,21 +1,9 @@
-# TL;DR
+# Foreword
 
-This [excellent answer](https://stackoverflow.com/a/56601178/3532564) describes, at a very high level, `functors`
-and `monads`
+We are on to the last portion of our tutorial! Thank you for sticking around and I hope that all of this has been
+enlightening so far. Conceptually, this code is the 
 
-`functors` and `monads` both provide some tool to wrapped input, returning a wrapped output.
-
-- `Monad` = unit + flatMap (or bind or chain)
-
-## `unit`?
-
-A constructor. It takes some arbitrary type, `a`, and transforms it into a Monad type, `Monad b`.
-
-## A `bind`?
-
-A
-
-# Scenario
+## Scenario
 
 Head to the [foreword](foreword.md) and then come back.
 
