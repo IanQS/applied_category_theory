@@ -1,0 +1,12 @@
+[project]
+name = "applied_category_theory"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "pyrefly>=1.1.1",
+]
+
+[tool.uv.workspace]
+members = ["applied_category_theory"]
