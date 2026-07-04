@@ -113,10 +113,11 @@ class LossTree:
             self._between(node.right, low, high, out)
 
     def map(self, f: Callable[[Run], Run]) -> LossTree:
-        """fmap. f may change the loss, so we rebuild and re-key by the new value."""
+        """(fmap . f) may change the loss (key), so we rebuild and re-key by the new value."""
         return LossTree.from_runs(f(run) for run in self.items())
 
     def filter(self, keep: Callable[[Run], bool]) -> LossTree:
+        """(filter . f) may change the loss (key), so we rebuild and re-key by the new value."""
         return LossTree.from_runs(run for run in self.items() if keep(run))
 
 def test_composition(tree: LossTree):
