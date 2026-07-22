@@ -1,7 +1,7 @@
-# Verbatim copy of ../2_functors/functors.py, kept here so monads.py can import the
-# LossTree functor without reaching into a sibling directory. Nothing below changed
-# from the functor post; the two ops that make LossTree a monoid (of and __add__)
-# are added in monads.py.
+# Copy of ../2_functors/functors.py, kept here so monads.py can import the
+# LossTree functor without reaching into a sibling directory. One change from
+# the functor post: LossTree picks up the two ops that make it a monoid
+# (`of` and `__add__`), marked "New for post 3" below.
 """
 The functor version: hold the runs in a tree that is keyed by validation loss, rather than a list. That's it, folks.
 
@@ -123,6 +123,25 @@ class LossTree:
     def filter(self, keep: Callable[[Run], bool]) -> LossTree:
         """(filter . f) may change the loss (key), so we rebuild and re-key by the new value."""
         return LossTree.from_runs(run for run in self.items() if keep(run))
+
+    # New for post 3: `of` and `__add__` promote the tree from a functor to a
+    # monoid (the identity is the empty LossTree()), so a Report full of trees
+    # can fold up post 1's reduction tree unchanged.
+    @classmethod
+    def of(cls, run: Run) -> LossTree:
+        """Lift a single run into a one-element tree, same shape as Summary.of."""
+        tree = cls()
+        tree.insert(run)
+        return tree
+
+    def __add__(self, other: LossTree) -> LossTree:
+        # items() yields runs sorted by loss, and inserting sorted keys into a
+        # plain BST builds a linked list (and a RecursionError somewhere around
+        # a thousand runs). Shuffling keeps the demo tree shallow; the "use an
+        # AVL or red-black tree in prod" disclaimer from post 2 still applies.
+        merged_runs = [*self.items(), *other.items()]
+        random.shuffle(merged_runs)
+        return LossTree.from_runs(iter(merged_runs))
 
 def test_composition(tree: LossTree):
     """
