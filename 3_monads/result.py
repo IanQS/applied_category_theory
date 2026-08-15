@@ -35,13 +35,6 @@ Just a quick reminder, from `functors` we have a `map` (and `filter`). The two a
 
 - `join`, which collapses one layer of nesting: `M (M a) -> M a`. Defined below as `flatten`, because that's what it does
 
-This route makes `bind` derived rather than primitive, and the code below takes that literally: mapping a step of type `a -> M b` leaves an `M (M b)` behind, `join` unwraps the nested layer, and `bind` is defined as exactly that composite:
-
-`ma.bind(step) == flatten(ma.map(step))`
-
-The short-circuiting we want from `Result` is emergent: `map` leaves an `Err` untouched and `flatten` passes it through, so no `if failed, skip` ever gets written. (`test_bind_short_circuits` over in monads.py checks the derived `bind` still behaves like naive.py's hand-rolled ladder.)
-
-
 """
 
 from __future__ import annotations
