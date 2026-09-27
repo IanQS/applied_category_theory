@@ -35,8 +35,8 @@ def run_config(config: dict) -> Run:
 
 class _Node:
 
-     # Save space for when this scales up. Slots are pretty cool and IMO underused
-    __slots__ = ("key", "run", "left", "right") 
+    # Save space for when this scales up. Slots are pretty cool and IMO underused
+    __slots__ = ("key", "run", "left", "right")
 
     def __init__(self, key: float, run: Run):
         self.key = key

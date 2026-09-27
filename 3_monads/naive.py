@@ -11,6 +11,7 @@ The end of the file does the same thing for a running log instead of a failure r
 
 from __future__ import annotations
 
+import math
 import random
 from dataclasses import dataclass
 
@@ -18,7 +19,7 @@ from dataclasses import dataclass
 @dataclass(frozen=True)
 class Run:
     config: dict
-    loss: float = float("nan")
+    loss: float = math.nan
 
 
 def load_shard(config: dict):

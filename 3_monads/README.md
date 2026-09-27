@@ -1,6 +1,6 @@
 # Note:
 
-Please read through [The monoid](https://ianq.ai/cats-big-data-monoid/) and then [The functor](https://ianq.ai/cats-big-data-functor/) functor post first. The scenario itself is unchanged (copy-pasted from the first post):
+Please read through [The monoid](https://ianq.ai/cats-big-data-monoid/) and then [The functor](https://ianq.ai/cats-big-data-functor/) post first. The scenario itself is unchanged (copy-pasted from the first post):
 
 > We have many worker machines each run a handful of training configs. Those reports are combined to make a final report.
 

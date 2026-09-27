@@ -28,9 +28,9 @@ import random
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, replace
 
-from result import Ok, Err, Result  # the Result monad, defined in the same dir
-from monoids import Summary  # the monoid from post 1
 from functors import LossTree  # the functor from post 2, but augmented with a new op
+from monoids import Summary  # the monoid from post 1
+from result import Err, Ok, Result  # the Result monad, defined in the same dir
 
 
 @dataclass(frozen=True)
@@ -102,7 +102,7 @@ class Report:
 
 def fold_outcome(outcome: Result) -> Report:
     """
-    In post 1 we sidestepped failures (code errors, machine errors, etc.) but just
+    In post 1 we sidestepped failures (code errors, machine errors, etc.) by just
     creating an empty monoid. Here, we track the actual reason (wrapped in the identity)
     """
     if isinstance(outcome, Err):
@@ -126,7 +126,7 @@ class Writer:
 
     def bind(self, step: Callable[[object], Writer]) -> Writer:
         """
-        From the second avenue, from `result.py`, we know that `bind` is
+        From route 2 in `result.py`, we know that `bind` is
         derived by applying the function (leaving a Writer inside a Writer),
         then joining. A Writer's join merges the logs, so both halves are
         inlined below.
