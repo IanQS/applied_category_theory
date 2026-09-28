@@ -47,6 +47,7 @@ from dataclasses import dataclass
 class Ok:
     value: object
 
+    # From the functors definition
     def map(self, f: Callable[[object], object]) -> Result:
         return Ok(f(self.value))
 
@@ -58,6 +59,7 @@ class Ok:
 class Err:
     reason: str
 
+    # From the functors definition
     def map(self, f: Callable[[object], object]) -> Err:
         return self  # a dead run stays dead, and keeps its reason
 

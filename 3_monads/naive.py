@@ -3,7 +3,7 @@ Naive version: where we catch the failures and propagate them around manually
 
 Remember that in the first post (monoids) we side-stepped the failures by swapping out the dead run for the identity
 `Summary()`, which also threw away information about the machine (or why it died). If we were trying to keep the
-information, and assuming we needed a guard block after every step, this turns into a cascade.
+information, and assuming we needed a guard block after every step, turning this into a cascade of information.
 
 The end of the file does the same thing for a running log instead of a failure reason, so it lines up one to one with
  the Result and Writer monads over in monads.py.
@@ -61,7 +61,7 @@ def evaluate(config: dict):
 
 
 # ---------------------------------------------------------------------------
-# The same shape, but we pass a running log instead of a failure reason. Each
+# The same "shape", but we pass a running log instead of a failure reason. Each
 # step hands back its own line and the caller has to remember to stitch them
 # together before moving on. The Writer monad handles this portion
 # ---------------------------------------------------------------------------

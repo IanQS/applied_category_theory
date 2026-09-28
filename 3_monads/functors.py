@@ -18,6 +18,7 @@ Where we have:
 
 We test this at the end
 """
+
 from __future__ import annotations
 
 import random
@@ -38,7 +39,6 @@ def run_config(config: dict) -> Run:
 
 
 class _Node:
-
     # Save space for when this scales up. Slots are pretty cool and IMO underused
     __slots__ = ("key", "run", "left", "right")
 
@@ -97,7 +97,7 @@ class LossTree:
         node = self._root
         if node is None:
             raise ValueError("no runs")
-        while node.left is not None:      # leftmost node holds the lowest loss
+        while node.left is not None:  # leftmost node holds the lowest loss
             node = node.left
         return node.run
 
@@ -109,11 +109,11 @@ class LossTree:
     def _between(self, node: _Node | None, low: float, high: float, out: list[Run]) -> None:
         if node is None:
             return
-        if node.key > low:                # anything smaller can only be to the left
+        if node.key > low:  # anything smaller can only be to the left
             self._between(node.left, low, high, out)
         if low <= node.key <= high:
             out.append(node.run)
-        if node.key < high:               # ...and anything larger to the right
+        if node.key < high:  # ...and anything larger to the right
             self._between(node.right, low, high, out)
 
     def map(self, f: Callable[[Run], Run]) -> LossTree:
@@ -124,9 +124,8 @@ class LossTree:
         """(filter . f) may change the loss (key), so we rebuild and re-key by the new value."""
         return LossTree.from_runs(run for run in self.items() if keep(run))
 
-    # New for post 3: `of` and `__add__` promote the tree from a functor to a
-    # monoid (the identity is the empty LossTree()), so a Report full of trees
-    # can fold up post 1's reduction tree unchanged.
+    # New for post 3: `of` and `__add__` make the tree a monoid - (the identity is the empty LossTree()),
+    # so a Report full of trees can fold up post 1's reduction tree unchanged.
     @classmethod
     def of(cls, run: Run) -> LossTree:
         """Lift a single run into a one-element tree, same shape as Summary.of."""
@@ -143,14 +142,16 @@ class LossTree:
         random.shuffle(merged_runs)
         return LossTree.from_runs(iter(merged_runs))
 
+
 def test_composition(tree: LossTree):
     """
     We don't bother to test the:
-    
+
         - Functors must preserve identity morphisms
 
     because that's pretty trivial.
     """
+
     def shift(run: Run) -> Run:
         """Transform the underlying data"""
         return replace(run, loss=round(run.loss + 1.0, 4))
@@ -166,7 +167,7 @@ def test_composition(tree: LossTree):
     chained = tree.map(shift).map(tag)
     assert list(composed.items()) == list(chained.items())
     print("Composition law + Chaining Holds")
-    
+
 
 if __name__ == "__main__":
     random.seed(0)

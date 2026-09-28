@@ -1,7 +1,6 @@
 """
 The monad version:
 
-
 thread a run through a pipeline of steps that can each fail,
 carrying *why* it failed instead of collapsing it to a None or an empty Summary.
 
@@ -9,8 +8,7 @@ There are two parts here: a `Report`, which encapsulates the results of various 
 accumulates result logs.
 
 `Report`:
-    This is the culmination of all our work, so we import the Summary monoid and the
-    LossTree functor from the copies in this repo.
+    The final-product of all our work. We wrap the Summary monoid and the LossTree
 
     Note: we've augmented `LossTree` in `functors.py` (marked "New for post 3"): the
         `of` and `__add__`, that transform it from a functor to a monoid, which
@@ -28,7 +26,7 @@ import random
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, replace
 
-from functors import LossTree  # the functor from post 2, but augmented with a new op
+from functors import LossTree  # the functor from post 2, but augmented with the `__add__` and the `.of`
 from monoids import Summary  # the monoid from post 1
 from result import Err, Ok, Result  # the Result monad, defined in the same dir
 
@@ -61,7 +59,6 @@ def validate(run: Run) -> Result:
 
 
 def score(run: Run) -> Result:
-    # Pure packaging: give a non-erroring result its loss.
     return Ok(replace(run, loss=round(random.random(), 4)))
 
 
@@ -73,13 +70,16 @@ def evaluate(config: dict) -> Result:
 
 
 # ---------------------------------------------------------------------------
-# Where the three posts meet: the monad's outcomes feed a monoid (Report) that
-# carries a functor (LossTree, promoted to a monoid over in functors.py).
+# Culmination of all of our work so far - we take the Summary, LossTree and Mapping
+# And wrap it all up
 # ---------------------------------------------------------------------------
 @dataclass(frozen=True)
 class Report:
-    """A product of three monoids: combine the stats, merge the survivors, add up
-    the failure counts. That is why the whole thing still folds up post 1's tree."""
+    """
+    The product of our monoids where we combine the stats (Summary), merge the survivors (the LossTree) and the count of the failures (the count is what makes it a monoid!)
+
+    NOTE: this is, itself, NOT a monad!
+    """
 
     stats: Summary
     survivors: LossTree
@@ -95,16 +95,12 @@ class Report:
             combined_failures[reason] = combined_failures.get(reason, 0) + count
         return Report(
             self.stats + other.stats,
-            self.survivors + other.survivors,
+            self.survivors + other.survivors,  # <-- The reason why we made the functor a monoid
             combined_failures,
         )
 
 
 def fold_outcome(outcome: Result) -> Report:
-    """
-    In post 1 we sidestepped failures (code errors, machine errors, etc.) by just
-    creating an empty monoid. Here, we track the actual reason (wrapped in the identity)
-    """
     if isinstance(outcome, Err):
         return Report(Summary(), LossTree(), {outcome.reason: 1})
     run = outcome.value
@@ -117,12 +113,16 @@ def reduce(reports: Iterable[Report]) -> Report:
 
 # ---------------------------------------------------------------------------
 # The Writer monad: thread a value while accumulating a log. The log is any
-# monoid (combined with +), so the Summary above slots in as easily as a list.
+# monoid (combined with +/__add__), so the Summary above slots in as easily as a list.
+#
 # ---------------------------------------------------------------------------
 @dataclass(frozen=True)
 class Writer:
     value: object
     log: object
+
+    def map(self, f: Callable[[object], object]) -> Writer:
+        return Writer(f(self.value), self.log)
 
     def bind(self, step: Callable[[object], Writer]) -> Writer:
         """
@@ -133,9 +133,6 @@ class Writer:
         """
         stepped = step(self.value)
         return Writer(stepped.value, self.log + stepped.log)
-
-    def map(self, f: Callable[[object], object]) -> Writer:
-        return Writer(f(self.value), self.log)
 
 
 def load_traced(config: dict) -> Writer:
@@ -171,7 +168,7 @@ def test_monad_laws():
     assert Ok(3).bind(grow) == grow(3)
     # right identity: m.bind(Ok) == m
     assert Ok(3).bind(Ok) == Ok(3)
-    # associativity: nesting the binds on either side lands in the same place
+    # associativity: nesting the binds on either side brings us to the same spot
     assert Ok(3).bind(grow).bind(double) == Ok(3).bind(lambda n: grow(n).bind(double))
     print("Monad laws hold (identity + associativity, i.e. a monoid)")
 
