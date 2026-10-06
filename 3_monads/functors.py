@@ -124,7 +124,7 @@ class LossTree:
         """(filter . f) may change the loss (key), so we rebuild and re-key by the new value."""
         return LossTree.from_runs(run for run in self.items() if keep(run))
 
-    # New for post 3: `of` and `__add__` make the tree a monoid - (the identity is the empty LossTree()),
+    # New for post 3: `of` and `__add__` make the tree a monoid (the identity is the empty LossTree()),
     # so a Report full of trees can fold up post 1's reduction tree unchanged.
     @classmethod
     def of(cls, run: Run) -> LossTree:

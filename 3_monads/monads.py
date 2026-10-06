@@ -8,7 +8,7 @@ There are two parts here: a `Report`, which encapsulates the results of various 
 accumulates result logs.
 
 `Report`:
-    The final-product of all our work. We wrap the Summary monoid and the LossTree
+    The final product of all our work. We wrap the Summary monoid and the LossTree
 
     Note: we've augmented `LossTree` in `functors.py` (marked "New for post 3"): the
         `of` and `__add__`, that transform it from a functor to a monoid, which
@@ -26,7 +26,7 @@ import random
 from collections.abc import Callable, Iterable, Mapping
 from dataclasses import dataclass, replace
 
-from functors import LossTree  # the functor from post 2, but augmented with the `__add__` and the `.of`
+from functors import LossTree  # post 2's functor, now with `of` and `__add__`
 from monoids import Summary  # the monoid from post 1
 from result import Err, Ok, Result  # the Result monad, defined in the same dir
 
@@ -71,7 +71,7 @@ def evaluate(config: dict) -> Result:
 
 # ---------------------------------------------------------------------------
 # Culmination of all of our work so far - we take the Summary, LossTree and Mapping
-# And wrap it all up
+# and wrap it all up
 # ---------------------------------------------------------------------------
 @dataclass(frozen=True)
 class Report:
