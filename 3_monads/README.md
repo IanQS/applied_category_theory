@@ -8,6 +8,6 @@ In the post on monoids, I left a (rather) big plot-hole in the story - machines 
 
 > what if we wanted to store why a run failed, instead of swapping it for the identity Summary()?
 
-The `monoid` post discarded information on **why** a machine would fail, and the functor code sidestepped this entirely. This post builds up the pipeline with a `Result` monad; tying it back to the `Summary` monoid and the `LossTree` functor is the job of the next post, over in `../4_altogether`.
+The `monoid` post discarded information on **why** a machine would fail, and the functor code sidestepped this entirely. This post builds up the pipeline with a `Result` monad; In the fourth post, we will tie do a deep integration with our existing pipeline, with a `Summary` monoid and the `LossTree` functor, all wrapped into a monad.
 
-As before, `naive.py` is the hand-rolled version, threading the failure reason through the steps by hand. `result.py` holds the `Result` monad on its own, with the two ways of deriving `bind` in its preamble. `monads.py` builds the pipeline on top of it and checks the monad laws.
+As before, `naive.py` is the hand-rolled version, which will thread the failure reason through the steps by hand. `result.py` defines the `Result` monad, discussing the two ways of deriving `bind` in its preamble. `monads.py` builds the pipeline on top of it and checks the monad laws.

@@ -10,7 +10,6 @@ Typically, I'd say just take the "direct definition" route (Wikipedia even intro
 
 ---
 
-
 1) from a functor, as per [wikipedia](https://en.wikipedia.org/wiki/Monad_(functional_programming)#Derivation_from_functors):
 
 > Though rarer in computer science, one can use category theory directly, which defines a monad as a functor with two added natural transformations:
@@ -23,7 +22,7 @@ Just a quick reminder, from `functors` we have a `map` (and `filter`). The two a
 
 ---
 
-2) From the direct definition: in a sense, a [monad is a burrito](https://blog.plover.com/prog/burritos.html) (this made the rounds during college when people would ask "WTF is a monad?") and I mean this ONLY in the context of it being a container. I promise this will make sense.
+2) From the direct definition: in a sense, a [monad is a burrito](https://blog.plover.com/prog/burritos.html)$^1$. and I mean this ONLY in the context of it being a container. I promise this will make sense.
 
 A monad requires two things (see my blog post, but we summarize it here):
 
@@ -36,9 +35,10 @@ A monad requires two things (see my blog post, but we summarize it here):
 
 where M is the monadic object. The signature says that we take a monadic object AND a function that is applied to the filling, `a`, and returns a new burrito with the filling transformed.
 
+$^1$ Ironically, I never actually READ this article - I was too busy asking "WTF is this gobbledygook" and then promptly moving on.
 ---
 
-I've given it away already, but the two paths "join" at `bind` 😏 : the first path gives you a `map` (from the functor) and a `join`; composing the two generates your `bind`:  `bind(step) = flatten(map(step))`. On the other hand, the second path directly gives you the operation. Study the `bind` for the `Result` types below and this will all (hopefully) become clear
+I've given it away already, but the two paths "join" at `bind` 😏 : the first path gives you a `map` (from the functor) and a `join`; composing the two generates your `bind`:  `bind(step) = flatten(map(step))`. On the other hand, the second path directly gives you the `bind`. Study for the `Result` types below and this will all (hopefully) become clear:
 """
 
 from __future__ import annotations
@@ -70,12 +70,11 @@ class Err:
     def bind(self, step: Callable[[object], Result]) -> Result:
         return flatten(self.map(step))  # map is a no-op on an Err, so it slides through untouched
 
-
 Result = Ok | Err
 
 
 def flatten(nested: Result) -> Result:
-    """collapse one Result layer (route 2's `join`):
+    """collapse one Result layer (route 1's `join`):
 
     - Ok(Ok(x)) -> Ok(x),
     - Ok(Err) -> Err,
